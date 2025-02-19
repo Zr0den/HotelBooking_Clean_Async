@@ -168,27 +168,27 @@ namespace HotelBooking.UnitTests
             Assert.NotEqual(-1, roomId);
         }
 
-        //[Fact]
-        //public async Task FindAvailableRoom_RoomAvailable_ReturnsAvailableRoom()
-        //{
-        //    // This test was added to satisfy the following test design
-        //    // principle: "Tests should have strong assertions".
+        [Fact]
+        public async Task FindAvailableRoom_RoomAvailable_ReturnsAvailableRoom()
+        {
+            // This test was added to satisfy the following test design
+            // principle: "Tests should have strong assertions".
 
-        //    // Arrange
-        //    DateTime date = DateTime.Today.AddDays(1);
+            // Arrange
+            DateTime date = DateTime.Today.AddDays(1);
 
-        //    // Act
-        //    int roomId = await bookingManager.FindAvailableRoom(date, date);
+            // Act
+            int roomId = await bookingManager.FindAvailableRoom(date, date);
 
-        //    var bookingForReturnedRoomId = (await bookingRepository.GetAllAsync()).
-        //        Where(b => b.RoomId == roomId
-        //                   && b.StartDate <= date
-        //                   && b.EndDate >= date
-        //                   && b.IsActive);
+            var bookingForReturnedRoomId = (await bookingRepository.Object.GetAllAsync()).
+                Where(b => b.RoomId == roomId
+                           && b.StartDate <= date
+                           && b.EndDate >= date
+                           && b.IsActive);
 
-        //    // Assert
-        //    Assert.Empty(bookingForReturnedRoomId);
-        //}
+            // Assert
+            Assert.Empty(bookingForReturnedRoomId);
+        }
 
     }
 }
