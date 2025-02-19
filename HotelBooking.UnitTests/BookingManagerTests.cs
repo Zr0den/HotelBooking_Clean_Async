@@ -57,6 +57,7 @@ namespace HotelBooking.UnitTests
         [InlineData(9, 11, false)]
         [InlineData(14, 16, true)]
         [InlineData(17, 18, true)]
+        [InlineData(1, 20, false)]
         public async Task CreateBooking_ReturnsCorrectValue_WithDifferentInput(int start, int end, bool expectedResult)
         {
             //Arrange
@@ -83,6 +84,7 @@ namespace HotelBooking.UnitTests
         [InlineData(9, 11, -1)]
         [InlineData(14, 16, 2)]
         [InlineData(17, 18, 1)]
+        [InlineData(1, 20, -1)]
         public async Task FindAvailableRoom_ReturnsCorrectValue_WithDifferentInput(int start, int end, int expected)
         {
             //Arrange
