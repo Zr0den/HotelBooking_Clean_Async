@@ -142,6 +142,27 @@ namespace HotelBooking.UnitTests
             {
                 14, 20, new List<DateTime> { }
             };
+
+            yield return new object[]
+            {
+                4, 7, new List<DateTime>
+                {   today.AddDays(6),
+                    today.AddDays(7),
+                }
+            };
+        }
+
+        [Fact]
+        public async Task CreateBooking_NotCreatedWhenIdMinusOne_ReturnsFalse()
+        {
+            // Arrange
+            DateTime date = DateTime.Today;
+
+            // Act
+            Task result() => bookingManager.FindAvailableRoom(date, date);
+
+            // Assert
+            await Assert.ThrowsAsync<ArgumentException>(result);
         }
 
         [Fact]
