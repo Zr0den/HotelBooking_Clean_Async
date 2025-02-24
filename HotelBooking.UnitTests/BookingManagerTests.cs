@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using HotelBooking.Core;
 using Xunit;
 using System.Linq;
@@ -8,42 +8,17 @@ using System.Collections.Generic;
 
 namespace HotelBooking.UnitTests
 {
-    public class BookingManagerTests
+    public class BookingManagerTests : IClassFixture<BookingManagerFixture>
     {
         private IBookingManager bookingManager;
         private readonly Mock<IRepository<Booking>> bookingRepository;
         private readonly Mock<IRepository<Room>> roomRepository;
 
-        public BookingManagerTests()
+        public BookingManagerTests(BookingManagerFixture fixture)
         {
-            bookingRepository = new Mock<IRepository<Booking>>();
-            roomRepository = new Mock<IRepository<Room>>();
-            DateTime today = DateTime.Today;
-
-            var bookings = new List<Booking>
-        {
-            new Booking { Id = 1, StartDate = today.AddDays(-4), EndDate = today.AddDays(-2), IsActive = false, RoomId = 2 },
-            new Booking { Id = 2, StartDate = today.AddDays(-2), EndDate = today.AddDays(2), IsActive = true, RoomId = 1 },
-            new Booking { Id = 3, StartDate = today.AddDays(3), EndDate = today.AddDays(5), IsActive = true, RoomId = 1 },
-            new Booking { Id = 4, StartDate = today.AddDays(6), EndDate = today.AddDays(13), IsActive = true, RoomId = 1 },
-            new Booking { Id = 5, StartDate = today.AddDays(14), EndDate = today.AddDays(16), IsActive = true, RoomId = 1 },
-            new Booking { Id = 6, StartDate = today.AddDays(6), EndDate = today.AddDays(8), IsActive = true, RoomId = 2 },
-            new Booking { Id = 7, StartDate = today.AddDays(9), EndDate = today.AddDays(11), IsActive = true, RoomId = 2 },
-            new Booking { Id = 8, StartDate = today.AddDays(12), EndDate = today.AddDays(13), IsActive = true, RoomId = 2 }
-        };
-
-            var rooms = new List<Room>
-            {
-                new Room { Id = 1, Description = "A" },
-                new Room { Id = 2, Description = "B" },
-            };
-            roomRepository.Setup(repo => repo.GetAllAsync())
-                                  .ReturnsAsync(rooms);
-
-            bookingRepository.Setup(repo => repo.GetAllAsync())
-                                  .ReturnsAsync(bookings);
-
-            bookingManager = new BookingManager(bookingRepository.Object, roomRepository.Object);
+            bookingManager = fixture.BookingManager;
+            bookingRepository = fixture.BookingRepository;
+            roomRepository = fixture.RoomRepository;
         }
 
         [Theory]
@@ -152,17 +127,22 @@ namespace HotelBooking.UnitTests
             };
         }
 
+        //Nok overflødig test..
         [Fact]
-        public async Task CreateBooking_NotCreatedWhenIdMinusOne_ReturnsFalse()
+        public async Task CreateBooking_NotCreatedWhenNoAvailableRoom_ReturnsFalse()
         {
             // Arrange
-            DateTime date = DateTime.Today;
+            DateTime start = DateTime.Today.AddDays(7);
+            DateTime end = DateTime.Today.AddDays(8);
+
+            Booking booking = new Booking { Id = 99, StartDate = start, EndDate = end, IsActive = true };
+
 
             // Act
-            Task result() => bookingManager.FindAvailableRoom(date, date);
+            bool result = await bookingManager.CreateBooking(booking);
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentException>(result);
+            Assert.False(result);
         }
 
         [Fact]
